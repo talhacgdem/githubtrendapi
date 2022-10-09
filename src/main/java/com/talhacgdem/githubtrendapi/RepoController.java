@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @RestController
-@RequestMapping("/repo")
+@RequestMapping("/repositories")
 public class RepoController {
 
     private final RepoService repoService;
@@ -17,7 +17,7 @@ public class RepoController {
         this.repoService = repoService;
     }
 
-    @GetMapping("update")
+    @GetMapping({"trends", ""})
     public ResponseEntity updateRepos(){
         return ResponseEntity.ok(repoService.update());
     }

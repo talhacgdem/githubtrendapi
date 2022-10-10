@@ -5,21 +5,33 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Repo{
-    private String id;
-    private String name;
-    private String owner;
-    private String full_name;
+    private Integer rank;
+    private String repositoryName;
+    private String username;
     private String description;
+    private String url;
     private String language;
-    private Integer totalstars;
+    private String languageColor;
+    private Integer totalStars;
     private Integer forks;
-    private Integer todays_stars;
+    private Integer starsSince;
+    private List<Developer> builtBy;
+
+    public void setLanguageColor(String languageColor){
+        if (languageColor != null && !languageColor.equals(""))
+            languageColor = languageColor.substring(languageColor.indexOf('#'));
+
+
+        this.languageColor = languageColor;
+    }
 
 //    @Override
 //    public int compareTo(Repo o) {

@@ -8,8 +8,6 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @Service
@@ -32,13 +30,19 @@ public class RepoService {
                     repo = setFromCaptionRepo(captionOfRepository);
                     repo.setDescription(articleTag.select("p.col-9.color-fg-muted.pr-4").text());
                     repo.setLanguage(articleTag.select("span[itemprop=\"programmingLanguage\"]").text());
-                    repo.setTotalstars(getIntValueFromString(articleTag.selectXpath("div[2]/a[1]").text()));
+                    repo.setLanguageColor(articleTag.select("span.repo-language-color").attr("style"));
+
+                    repo.setTotalStars(getIntValueFromString(articleTag.selectXpath("div[2]/a[1]").text()));
                     repo.setForks(getIntValueFromString(articleTag.selectXpath("div[2]/a[2]").text()));
-                    repo.setTodays_stars(getIntValueFromString(articleTag.selectXpath("div[2]/span[3]").text()));
+                    repo.setStarsSince(getIntValueFromString(articleTag.selectXpath("div[2]/span[3]").text()));
+
+                    Elements builtBy = articleTag.selectXpath("div[2]/span[2]/a");
+                    repo.setBuiltBy(setDevelopersToRepo(builtBy));
+
                     listOfRepositories.add(repo);
                 }
 
-                listOfRepositories.sort((r1, r2) -> r2.getTodays_stars().compareTo(r1.getTodays_stars()));
+                listOfRepositories.sort((r1, r2) -> r2.getStarsSince().compareTo(r1.getStarsSince()));
 
                 return listOfRepositories;
 
@@ -51,61 +55,46 @@ public class RepoService {
         }
     }
 
+    private List<Developer> setDevelopersToRepo(Elements devElements){
+        List<Developer> developers = new ArrayList<>();
+
+        for (Element devElem : devElements){
+            Developer developer = new Developer(
+                    devElem.attr("href").replace("/", ""),
+                    "https://github.com" + devElem.attr("href"),
+                    devElem.select("img").eq(0).attr("src")
+            );
+            developers.add(developer);
+        }
+
+        return developers;
+    }
+
     private Repo setFromCaptionRepo(String from) {
         from = from.replace(" ", "");
         String[] splittedTitle = from.split("/");
+
         return new Repo(
-                generateHashIdFromCaptionString(from),
+                0,
                 splittedTitle[1],
                 splittedTitle[0],
-                from,
+                "",
+                "https://github.com/" + from,
                 "",
                 "",
                 0,
                 0,
-                0
+                0,
+                new ArrayList<>()
         );
-    }
-
-    private String generateHashIdFromCaptionString(String from) {
-        String generatedPassword = null;
-        try
-        {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(from.getBytes());
-            byte[] bytes = md.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte aByte : bytes) {
-                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-            }
-            generatedPassword = sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return generatedPassword;
-    }
-
-    private List<Repo> sortByRank(List<Repo> responseList) {
-//        List<Repo> employeeById = new ArrayList<>(responseList.values());
-        return null;
     }
 
     private Integer getIntValueFromString(String text) {
         try {
             return Integer.valueOf(text.replaceAll("[^0-9]", ""));
         }catch (Exception e){
-            System.out.println(text);
             return 0;
         }
     }
 
-
-    private Map<String, String> setFromCaption(String from){
-        from = from.replace(" ", "");
-        Map<String, String> to = new HashMap<>();
-        to.put("name", from.split("/")[1]);
-        to.put("owner", from.split("/")[0]);
-        to.put("full_name", from);
-        return to;
-    }
 }

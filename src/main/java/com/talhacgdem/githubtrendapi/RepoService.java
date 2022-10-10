@@ -15,17 +15,17 @@ public class RepoService {
     private final String GitHubURL = "https://github.com/trending";
 
 
-    public List<Repo> update(){
+    public List<Repo> update() {
         List<Repo> listOfRepositories = new ArrayList<>();
-        try{
+        try {
             Connection.Response jsoupResponse = Jsoup.connect(GitHubURL).execute();
-            if (jsoupResponse.statusCode() == 200){
+            if (jsoupResponse.statusCode() == 200) {
                 Document githubPage = jsoupResponse.parse();
                 Elements articleTagsForRepositories = githubPage.select("div.box article.Box-row");
 
                 Repo repo;
 
-                for (Element articleTag : articleTagsForRepositories){
+                for (Element articleTag : articleTagsForRepositories) {
                     String captionOfRepository = articleTag.select("h1.h3").text();
                     repo = setFromCaptionRepo(captionOfRepository);
                     repo.setDescription(articleTag.select("p.col-9.color-fg-muted.pr-4").text());
@@ -43,22 +43,25 @@ public class RepoService {
                 }
 
                 listOfRepositories.sort((r1, r2) -> r2.getStarsSince().compareTo(r1.getStarsSince()));
+                var ref = new Object() {
+                    int i = 1;
+                };
+                listOfRepositories.forEach((r) -> {r.setRank(ref.i); ref.i++;});
 
                 return listOfRepositories;
-
-            }else{
+            } else {
                 return null;
             }
-        }catch (IOException ioException){
+        } catch (IOException ioException) {
             ioException.printStackTrace();
             return null;
         }
     }
 
-    private List<Developer> setDevelopersToRepo(Elements devElements){
+    private List<Developer> setDevelopersToRepo(Elements devElements) {
         List<Developer> developers = new ArrayList<>();
 
-        for (Element devElem : devElements){
+        for (Element devElem : devElements) {
             Developer developer = new Developer(
                     devElem.attr("href").replace("/", ""),
                     "https://github.com" + devElem.attr("href"),
@@ -92,7 +95,7 @@ public class RepoService {
     private Integer getIntValueFromString(String text) {
         try {
             return Integer.valueOf(text.replaceAll("[^0-9]", ""));
-        }catch (Exception e){
+        } catch (Exception e) {
             return 0;
         }
     }

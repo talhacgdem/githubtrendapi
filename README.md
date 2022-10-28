@@ -12,13 +12,9 @@ Set server port on src > main > resources > application.properties then run.
 
 Get request to 
 
-*your-host-name*:*your-port*/repositories 
+*your-host-name*:*your-port*/trendrepos
 
-or 
-
-*your-host-name*:*your-port*/repositories/trends 
-
-For example => http://localhost:8080/repositories/trends 
+For example => http://localhost:8080/trendrepos 
 
 ## Response
 

@@ -1,15 +1,10 @@
 package com.talhacgdem.githubtrendapi;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Repo{
@@ -32,12 +27,4 @@ public class Repo{
 
         this.languageColor = languageColor;
     }
-
-//    @Override
-//    public int compareTo(Repo o) {
-//        if (getTodays_stars() == null || o.getTodays_stars() == null) {
-//            return 0;
-//        }
-//        return getTodays_stars().compareTo(o.getTodays_stars());
-//    }
 }

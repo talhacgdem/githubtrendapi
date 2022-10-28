@@ -1,5 +1,7 @@
 # githubtrendapi
 
+This api running on http://44.202.117.91:8080/githubTrends/trendrepos
+
 This API is basically a system that pulls popular repositories from https://github.com/trending
 
 Uses jsoup as crawler library.
